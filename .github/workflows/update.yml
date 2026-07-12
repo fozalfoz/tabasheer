@@ -1,0 +1,33 @@
+name: Update Tabasheer News
+
+on:
+  schedule:
+    - cron: '0 * * * *' # سيعمل كل ساعة بالضبط
+  workflow_dispatch: # يسمح لك بتشغيله يدوياً للتجربة
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install feedparser beautifulsoup4 requests
+
+      - name: Run News Bot
+        run: python update_news.py
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'Tabasheer Bot'
+          git config --global user.email 'bot@tabasheer.com'
+          git add index.html
+          git commit -m "Update news automatically" || exit 0
+          git push
